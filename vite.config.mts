@@ -3,6 +3,7 @@ import path from 'node:path'
 import electron from 'vite-plugin-electron/simple'
 import vue from '@vitejs/plugin-vue'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,7 +18,8 @@ export default defineConfig({
     electron({
       main: {
         // Shortcut of `build.lib.entry`.
-        entry: 'electron/main.ts'
+        entry: 'electron/main.ts',
+        vite: {}
       },
       preload: {
         // Shortcut of `build.rollupOptions.input`.
@@ -67,7 +69,8 @@ export default defineConfig({
           'removeStyleElement'
         ]
       }
-    })
+    }),
+    tailwindcss({})
   ],
   define: {},
   css: {

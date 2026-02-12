@@ -22,6 +22,7 @@
     "electron-updater": "^6.2.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
+    "vue-draggable-plus": "^0.6.1",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
@@ -35,11 +36,13 @@
     "@electron-toolkit/tsconfig": "^2.0.0",
     "@electron/fuses": "^1.8.0",
     "@iconify-json/ep": "^1.1.15",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^25.2.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "electron": "^22.1.4",
     "prettier": "^3.3.3",
     "sass": "^1.75.0",
+    "tailwindcss": "^4.1.18",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-icons": "^0.18.5",
     "unplugin-vue-components": "^0.26.0",

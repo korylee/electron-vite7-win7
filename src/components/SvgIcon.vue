@@ -1,13 +1,11 @@
 <template>
-  <svg
-    aria-hidden="true"
-    class="svg-icon"
-    :style="{ width: size + 'px', height: size + 'px' }"
-  >
+  <svg v-bind="iconAttr" aria-hidden="true" class="svg-icon">
     <use :xlink:href="symbolId" />
   </svg>
 </template>
-<script setup>
+<script lang="ts" setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   name: {
     type: String,
@@ -18,6 +16,24 @@ const props = defineProps({
     default: 18
   }
 })
+
+const iconAttr = computed(() => {
+  const sizes = {
+    sm: 'w-4 h-4',
+    md: 'w-5 h-5',
+    lg: 'w-6 h-6',
+    xl: 'w-8 h-8'
+  } as const
+  const keys = Object.keys(sizes) as unknown as keyof typeof sizes
+  if (keys.includes(props.size as string)) {
+    return {
+      class: sizes[props.size]
+    }
+  }
+  return {
+    style: { width: props.size + 'px', height: props.size + 'px' }
+  }
+})
 const symbolId = computed(() => `#icon-${props.name}`)
 </script>
 
@@ -26,7 +42,5 @@ const symbolId = computed(() => `#icon-${props.name}`)
   fill: currentColor;
   vertical-align: middle;
   overflow: hidden;
-  width: 30px;
-  height: 30px;
 }
 </style>

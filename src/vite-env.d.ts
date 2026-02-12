@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
+import { ElectronAPI } from '@electron-toolkit/preload'
+import { GlobalApi } from '../electron/preload'
 
 declare global {
-  import { ElectronAPI } from '@electron-toolkit/preload'
-  import { GlobalApi } from '../electron/preload'
 
   // Used in Renderer process, expose in `preload.ts`
   interface Window {

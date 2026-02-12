@@ -1,8 +1,8 @@
-import { app, BrowserWindow, session, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, session } from 'electron'
 // import Store from 'electron-store'
 import path from 'node:path'
-import { checkUpdate } from './update'
-import Logger from 'electron-log'
+import { TabManager } from './utils/TabsManager'
+import { PRELOAD_PATH } from './utils/constant'
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -31,28 +31,42 @@ function createWindow() {
     height: 800,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      sandbox: true
-      // nodeIntegration:true,
-      // contextIsolation:false
+      preload: PRELOAD_PATH,
+      sandbox: true,
+      nodeIntegration:true,
+      contextIsolation: true
     }
   })
-  try {
-    checkUpdate(win)
-  } catch (error) {
-    Logger.error(error)
-  }
-  // Test active push message to Renderer-process.
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', new Date().toLocaleString())
-    //版本更新
+
+  const tabManager = new TabManager(win)
+
+  const urls = ['https://cn.bing.com', 'https://baidu.com']
+  urls.forEach((url, i) => {
+    const id = tabManager.createTab(url)
+    i === 0 && tabManager.switchTab(id)
   })
+
+  // Tab IPC
+  ipcMain.handle('tab:getAll', (_) => tabManager.getAllTabs())
+  ipcMain.handle('tab:switch', (_, id) => tabManager.switchTab(id))
+  ipcMain.handle('tab:close', (_, id) => tabManager.closeTab(id))
+  ipcMain.handle('tab:navigate', (_, id, url) => tabManager.navigate(id, url))
+  ipcMain.handle('tab:back', (_, id) => tabManager.goBack(id))
+  ipcMain.handle('tab:forward', (_, id) => tabManager.goForward(id))
+  ipcMain.handle('tab:reload', (_, id) => tabManager.reload(id))
+
+  // Download IPC
+  ipcMain.handle('download:getAll', (_) => tabManager.getDownloads())
+  ipcMain.handle('download:open', (_, id) => tabManager.openDownload(id))
+  ipcMain.handle('download:show', (_, id) => tabManager.showInFolder(id))
+  ipcMain.handle('download:remove', (_, id) => tabManager.removeDownload(id))
+  ipcMain.handle('download:clearCompleted', (_) => tabManager.clearCompleted())
+  ipcMain.handle('download:cancel', (_, id) => tabManager.cancelDownload(id))
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
     win.webContents.openDevTools()
   } else {
-    // win.loadFile('dist/index.html')
     win.loadFile(path.join(process.env.VITE_PUBLIC, 'index.html'))
   }
   // // 打开配置页面
@@ -65,25 +79,27 @@ function createWindow() {
   // })
 }
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-    win = null
-  }
-})
+app.whenReady().then(() => {
+  createWindow()
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})
+  // Quit when all windows are closed, except on macOS. There, it's common
+  // for applications and their menu bar to stay active until the user quits
+  // explicitly with Cmd + Q.
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+      win = null
+    }
+  })
 
-app.whenReady().then(createWindow)
+  app.on('activate', () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
+  })
+})
 
 /**
  * ipc通信
