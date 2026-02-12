@@ -1,8 +1,8 @@
 import { app, BrowserWindow, session, ipcMain } from 'electron'
 // import Store from 'electron-store'
 import path from 'node:path'
-import { checkUpdate } from './update'
 import Logger from 'electron-log'
+
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -37,11 +37,7 @@ function createWindow() {
       // contextIsolation:false
     }
   })
-  try {
-    checkUpdate(win)
-  } catch (error) {
-    Logger.error(error)
-  }
+
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString())

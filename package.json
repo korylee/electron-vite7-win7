@@ -1,5 +1,6 @@
 {
   "name": "electron-vite-vue3-win7",
+  "description": "win7 vue3 electron 模板",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -40,6 +41,7 @@
     "electron": "^22.1.4",
     "prettier": "^3.3.3",
     "sass": "^1.75.0",
+    "typescript": "^5.9.3",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-icons": "^0.18.5",
     "unplugin-vue-components": "^0.26.0",
@@ -52,6 +54,5 @@
     "name": "kory.leejie",
     "email": "kory.leejie@gmail.com"
   },
-  "description": "win7 electron 模板",
   "main": "dist-electron/main.js"
 }

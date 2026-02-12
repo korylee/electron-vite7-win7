@@ -1,10 +1,12 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
-  "include": ["src/**/*"],
+  "include": ["vite.config.*", "src/**/*"],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
+    "outDir": "temp",
     "checkJs": false,
+    "allowJs": true,
     "paths": {
       "@/*": ["src/*"]
     }
